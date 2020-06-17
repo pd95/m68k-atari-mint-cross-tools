@@ -18,7 +18,7 @@ ARCH2=i386
 
 ##########################################
 export VERSIONBIN=bin-$(shell uname -s  | tr "[:upper:]" "[:lower:]")
-export VERSIONBINCPU=$(VERSIONBIN)-$(shell uname -p  | tr "[:upper:]" "[:lower:]")
+export VERSIONBINCPU=$(VERSIONBIN)-$(shell uname -m  | tr "[:upper:]" "[:lower:]")
 export VERSIONBUILD=$(shell date +%Y%m%d)
 
 ##########################################
