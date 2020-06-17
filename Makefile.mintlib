@@ -1,0 +1,72 @@
+PACKAGE_NAME=mintlib
+VERSION=CVS-20140312
+VERSIONPATCH=-macos
+SOURCE_DIR=$(BUILD_DIR)/$(PACKAGE_NAME)-$(VERSION)
+COMPIL_DIR=$(BUILD_DIR)/$(PACKAGE_NAME)-$(VERSION)$(VERSIONPATCH)-$(VERSIONBIN)
+PACKAGE_FILE=$(PACKAGE_NAME)-$(VERSION)$(VERSIONPATCH)-$(VERSIONBIN)-$(VERSIONBUILD).tgz
+
+BINARY_DIR=$(COMPIL_DIR)/binary-package
+LOCAL_PREFIX_DIR=$(BINARY_DIR)$(PREFIX)
+
+M68K_PREFIX=$(PREFIX)/m68k-atari-mint
+CFLAGS=
+
+ifneq "$(GCC)" ""
+  GCC_BUILD_DIR=$(dir $(GCC))
+  CC=$(GCC) -B$(GCC_BUILD_DIR) -B$(M68K_PREFIX)/bin/ -B$(M68K_PREFIX)/lib/ -isystem $(M68K_PREFIX)/include -isystem $(M68K_PREFIX)/sys-include
+else
+  CC=m68k-atari-mint-gcc
+endif
+
+##########################################
+all:		extract patch configure compile packaging install
+
+clean:	
+	rm -rf "$(COMPIL_DIR)"
+	rm -rf "$(SOURCE_DIR)"
+	rm -rf "$(PACKAGES_DIR)/$(PACKAGE_FILE)"
+
+
+##########################################
+extract:	$(SOURCE_DIR)
+
+patch:		$(SOURCE_DIR)/_patch
+
+configure:
+
+compile:
+	@echo GCC=$(CC)
+	@echo GCC_BUILD_DIR=$(GCC_BUILD_DIR)  
+	@echo M68K_PREFIX=$(M68K_PREFIX)
+	make --directory="$(SOURCE_DIR)" prefix=$(LOCAL_PREFIX_DIR)/m68k-atari-mint CROSS=yes \
+		WITH_020_LIB=yes WITH_V4E_LIB=yes WITH_DEBUG_LIB=yes WITH_PROFILE_LIB=no \
+		CC="$(CC) -B$(GCC_BUILD_DIR) -B$(M68K_PREFIX)/bin/ -B$(M68K_PREFIX)/lib/ -isystem $(M68K_PREFIX)/include -isystem $(M68K_PREFIX)/sys-include"
+
+packaging:	$(PACKAGES_DIR)/$(PACKAGE_FILE)
+
+install:	packaging
+	tar xvzf "$(PACKAGES_DIR)/$(PACKAGE_FILE)" --directory $(dir $(PREFIX))
+
+
+##########################################
+# extract sources
+$(SOURCE_DIR):
+	tar xvzf "$(ARCHIVES_DIR)/$(PACKAGE_NAME)-$(VERSION).tar.gz" --directory "$(BUILD_DIR)"
+
+
+# apply patch to sources
+$(SOURCE_DIR)/_patch:		$(SOURCE_DIR)
+ifneq "$(VERSIONPATCH)" ""
+	bzcat "$(ARCHIVES_DIR)/$(PACKAGE_NAME)-$(VERSION)$(VERSIONPATCH).patch.bz2" | patch -p1 --directory $<
+endif
+	echo "$(GCC_BUILD_DIR)include -I$(GCC_BUILD_DIR)include-fixed" > "$(SOURCE_DIR)/includepath"
+	echo "$(VERSIONPATCH)" >  $@
+
+
+# build distribution package
+$(PACKAGES_DIR)/$(PACKAGE_FILE): $(SOURCE_DIR)/_patch
+	make --directory="$(SOURCE_DIR)" install prefix=$(LOCAL_PREFIX_DIR)/m68k-atari-mint CROSS=yes \
+		WITH_020_LIB=yes WITH_V4E_LIB=yes WITH_DEBUG_LIB=yes WITH_PROFILE_LIB=no \
+		CC="$(CC) -B$(GCC_BUILD_DIR) -B$(M68K_PREFIX)/bin/ -B$(M68K_PREFIX)/lib/ -isystem $(M68K_PREFIX)/include -isystem $(M68K_PREFIX)/sys-include"
+	rm -r "$(LOCAL_PREFIX_DIR)"/m68k-atari-mint/share
+	tar cvzf "$@" --directory "$(dir $(LOCAL_PREFIX_DIR))" $(notdir $(LOCAL_PREFIX_DIR)) 

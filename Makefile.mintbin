@@ -1,0 +1,68 @@
+PACKAGE_NAME=mintbin
+VERSION=CVS-20110527
+VERSIONPATCH=
+SOURCE_DIR=$(BUILD_DIR)/$(PACKAGE_NAME)-$(VERSION)
+COMPIL_DIR=$(BUILD_DIR)/$(PACKAGE_NAME)-$(VERSION)$(VERSIONPATCH)-$(VERSIONBINCPU)
+PACKAGE_FILE=$(PACKAGE_NAME)-$(VERSION)$(VERSIONPATCH)-$(VERSIONBINCPU)-$(VERSIONBUILD).tgz
+
+BINARY_DIR=$(COMPIL_DIR)/binary-package
+LOCAL_PREFIX_DIR=$(BINARY_DIR)$(PREFIX)
+
+ARCH=x86_64
+CFLAGS=-D_POSIX_SOURCE
+
+##########################################
+all:		extract patch configure compile packaging install
+
+clean:	
+	rm -rf "$(COMPIL_DIR)"
+	rm -rf "$(SOURCE_DIR)"
+	rm -rf "$(PACKAGES_DIR)/$(PACKAGE_FILE)"
+
+##########################################
+extract:	$(SOURCE_DIR)
+
+patch:		$(SOURCE_DIR)/_patch
+
+configure:	$(COMPIL_DIR)/Makefile
+
+compile:
+	make --directory="$(COMPIL_DIR)" CFLAGS=$(CFLAGS)
+
+packaging:	$(PACKAGES_DIR)/$(PACKAGE_FILE)
+
+install:	packaging
+	tar xvzf "$(PACKAGES_DIR)/$(PACKAGE_FILE)" --directory $(dir $(PREFIX))
+
+##########################################
+# extract sources
+$(SOURCE_DIR):
+	tar xvzf "$(ARCHIVES_DIR)/$(PACKAGE_NAME)-$(VERSION).tar.gz" --directory "$(BUILD_DIR)"
+
+
+# apply patch to sources
+$(SOURCE_DIR)/_patch:		$(SOURCE_DIR)
+ifneq "$(VERSIONPATCH)" ""
+	bzcat "$(ARCHIVES_DIR)/$(PACKAGE_NAME)-$(VERSION)$(VERSIONPATCH).patch.bz2" | patch -p1 --directory $<
+endif
+	cp /usr/local/share/automake-1.*/config.* "$(SOURCE_DIR)"
+	echo "$(VERSIONPATCH)" >  $@
+
+
+# configure package
+$(COMPIL_DIR)/Makefile:	$(SOURCE_DIR)/_patch
+	-mkdir $(dir $@)
+	cd "$(dir $@)" && \
+	CC="gcc -arch $(ARCH)" CXX="g++ -arch $(ARCH)" ../$(PACKAGE_NAME)-$(VERSION)/configure --target=m68k-atari-mint --prefix="$(PREFIX)" --disable-nls
+
+
+# build distribution package
+$(PACKAGES_DIR)/$(PACKAGE_FILE): $(COMPIL_DIR)/Makefile
+	make   --directory="$(COMPIL_DIR)" install DESTDIR="$(BINARY_DIR)" CFLAGS=$(CFLAGS)
+	rm     "$(BINARY_DIR)/"m68k-atari-mint-*
+	rm -rf "$(LOCAL_PREFIX_DIR)/info"
+	mkdir  "$(LOCAL_PREFIX_DIR)/bin"
+	mv     "$(LOCAL_PREFIX_DIR)/m68k-atari-mint/bin/"* "$(LOCAL_PREFIX_DIR)/bin"
+	rmdir  "$(LOCAL_PREFIX_DIR)/m68k-atari-mint/bin"
+	strip  "$(LOCAL_PREFIX_DIR)/bin/"*
+	tar cvzf "$@" --directory "$(dir $(LOCAL_PREFIX_DIR))" $(notdir $(LOCAL_PREFIX_DIR)) 

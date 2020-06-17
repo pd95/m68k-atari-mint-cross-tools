@@ -1,0 +1,57 @@
+PACKAGE_NAME=gemlib
+VERSION=GIT
+VERSIONPATCH=
+SOURCE_DIR=$(BUILD_DIR)/freemint-Git/$(PACKAGE_NAME)
+COMPIL_DIR=$(BUILD_DIR)/$(PACKAGE_NAME)-$(VERSION)
+PACKAGE_FILE=$(PACKAGE_NAME)-$(VERSION)$(VERSIONPATCH)-$(VERSIONBIN)-$(VERSIONBUILD).tgz
+
+BINARY_DIR=$(COMPIL_DIR)/binary-package
+LOCAL_PREFIX_DIR=$(BINARY_DIR)$(PREFIX)
+
+GITROOT=https://github.com/freemint/gemlib.git
+
+##########################################
+all:		extract patch configure compile packaging install
+
+clean:	
+	rm -rf "$(COMPIL_DIR)"
+	rm -rf "$(SOURCE_DIR)"
+	rm -rf "$(PACKAGES_DIR)/$(PACKAGE_FILE)"
+
+
+##########################################
+extract:	$(SOURCE_DIR)
+
+patch:		$(SOURCE_DIR)/_patch_$(PACKAGE_NAME)
+
+configure:
+
+compile:
+	make --directory="$(SOURCE_DIR)" CROSS=yes PREFIX=$(LOCAL_PREFIX_DIR)/m68k-atari-mint
+	make --directory="$(SOURCE_DIR)" install CROSS=yes PREFIX=$(LOCAL_PREFIX_DIR)/m68k-atari-mint
+
+packaging:	$(PACKAGES_DIR)/$(PACKAGE_FILE)
+
+install:	packaging
+	tar xvzf "$(PACKAGES_DIR)/$(PACKAGE_FILE)" --directory $(dir $(PREFIX))
+
+
+##########################################
+# extract sources
+$(SOURCE_DIR):
+	mkdir -p "$(dir $(SOURCE_DIR))"
+	cd "$(dir $(SOURCE_DIR))"  && git clone $(GITROOT) $(PACKAGE_NAME)
+
+
+# apply patch to sources
+$(SOURCE_DIR)/_patch_$(PACKAGE_NAME):		$(SOURCE_DIR)
+	cd "$(SOURCE_DIR)" && git pull
+ifneq "$(VERSIONPATCH)" ""
+	bzcat "$(ARCHIVES_DIR)/$(PACKAGE_NAME)-$(VERSION)$(VERSIONPATCH).patch.bz2" | patch --directory $(SOURCE_DIR)/$(PACKAGE_NAME)
+endif
+	echo "$(VERSIONPATCH)" >  $@
+
+
+# build distribution package
+$(PACKAGES_DIR)/$(PACKAGE_FILE): compile
+	tar cvzf "$@" --directory "$(dir $(LOCAL_PREFIX_DIR))" $(notdir $(LOCAL_PREFIX_DIR)) 
