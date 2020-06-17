@@ -13,8 +13,8 @@ export PATH:=$(PATH):/opt/cross-mint/bin
 
 # Default cross compiler
 export CC=$(shell which m68k-atari-mint-gcc)
-ARCH1=i386
-ARCH2=ppc
+ARCH1=x86_64
+ARCH2=i386
 
 ##########################################
 export VERSIONBIN=bin-$(shell uname -s  | tr "[:upper:]" "[:lower:]")
