@@ -1,15 +1,14 @@
 PACKAGE_NAME=gemma
-VERSION=CVS
+VERSION=Git-$(shell date "+%Y%m%d")
 VERSIONPATCH=
-SOURCE_DIR=$(BUILD_DIR)/sparemint-CVS/lib
+SOURCE_DIR=$(BUILD_DIR)/$(PACKAGE_NAME)-$(VERSION)/src
 COMPIL_DIR=$(BUILD_DIR)/$(PACKAGE_NAME)-$(VERSION)
 PACKAGE_FILE=$(PACKAGE_NAME)-$(VERSION)$(VERSIONPATCH)-$(VERSIONBIN)-$(VERSIONBUILD).tgz
 
 BINARY_DIR=$(COMPIL_DIR)/binary-package
 LOCAL_PREFIX_DIR=$(BINARY_DIR)$(PREFIX)
 
-CVSROOT=:pserver:cvsanon@sparemint.atariforge.net:/mint
-export CVSROOT
+GITROOT=https://github.com/freemint/$(PACKAGE_NAME).git
 
 ##########################################
 all:		extract patch configure compile packaging install
@@ -31,8 +30,8 @@ configure:
 	mkdir -p $(LOCAL_PREFIX_DIR)/m68k-atari-mint/stguide
 
 compile:
-	make --directory="$(SOURCE_DIR)/$(PACKAGE_NAME)" CROSS=yes PREFIX=$(LOCAL_PREFIX_DIR)/m68k-atari-mint
-	make --directory="$(SOURCE_DIR)/$(PACKAGE_NAME)" install CROSS=yes PREFIX=$(LOCAL_PREFIX_DIR)/m68k-atari-mint
+	make --directory="$(SOURCE_DIR)" CROSS=yes PREFIX=$(LOCAL_PREFIX_DIR)/m68k-atari-mint
+	make --directory="$(SOURCE_DIR)" install CROSS=yes PREFIX=$(LOCAL_PREFIX_DIR)/m68k-atari-mint
 
 packaging:	$(PACKAGES_DIR)/$(PACKAGE_FILE)
 
@@ -44,12 +43,12 @@ install:	packaging
 # extract sources
 $(SOURCE_DIR):
 	mkdir -p "$(dir $(SOURCE_DIR))"
-	cd "$(dir $(SOURCE_DIR))"  && cvs co lib
+	cd "$(dir $(SOURCE_DIR))"  && git clone $(GITROOT) src
 
 
 # apply patch to sources
 $(SOURCE_DIR)/_patch_$(PACKAGE_NAME):		$(SOURCE_DIR)
-	cd "$(SOURCE_DIR)" # && cvs up
+	cd "$(SOURCE_DIR)" && git pull
 ifneq "$(VERSIONPATCH)" ""
 	bzcat "$(ARCHIVES_DIR)/$(PACKAGE_NAME)-$(VERSION)$(VERSIONPATCH).patch.bz2" | patch --directory $(SOURCE_DIR)/$(PACKAGE_NAME)
 endif

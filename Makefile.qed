@@ -1,15 +1,14 @@
 PACKAGE_NAME=qed
-VERSION=CVS
+VERSION=Git-$(shell date "+%Y%m%d")
 VERSIONPATCH=
-SOURCE_DIR=$(BUILD_DIR)/sparemint-CVS/$(PACKAGE_NAME)
+SOURCE_DIR=$(BUILD_DIR)/$(PACKAGE_NAME)-$(VERSION)/src
 COMPIL_DIR=$(BUILD_DIR)/$(PACKAGE_NAME)-$(VERSION)
 PACKAGE_FILE=$(PACKAGE_NAME)-$(VERSION)$(VERSIONPATCH)-$(VERSIONBIN)-$(VERSIONBUILD).tgz
 
 BINARY_DIR=$(COMPIL_DIR)/binary-package
-LOCAL_PREFIX_DIR=$(BINARY_DIR)$(PREFIX)
+LOCAL_PREFIX_DIR=$(BINARY_DIR)
 
-CVSROOT=:pserver:cvsanon@sparemint.atariforge.net:/mint
-export CVSROOT
+GITROOT=https://github.com/freemint/$(PACKAGE_NAME).git
 
 ##########################################
 all:		extract patch configure compile packaging install
@@ -26,25 +25,28 @@ extract:	$(SOURCE_DIR)
 patch:		$(SOURCE_DIR)/_patch_$(PACKAGE_NAME)
 
 configure:
+	mkdir -p $(LOCAL_PREFIX_DIR)
 
 compile:
-	make --directory="$(SOURCE_DIR)" CROSS=yes
+	make --directory="$(SOURCE_DIR)" CROSS=yes all
+	make --directory="$(SOURCE_DIR)" CROSS=yes install installdir=$(LOCAL_PREFIX_DIR)/qed
 
 packaging:	$(PACKAGES_DIR)/$(PACKAGE_FILE)
 
 install:	packaging
-	tar xvzf "$(PACKAGES_DIR)/$(PACKAGE_FILE)" --directory $(dir $(PREFIX))
+	@echo "No installation of application in $(dir $(PREFIX)), check content of $(LOCAL_PREFIX_DIR)/qed"
 
 
 ##########################################
 # extract sources
 $(SOURCE_DIR):
-	cd "$(dir $(SOURCE_DIR))"  && cvs co qed
+	mkdir -p "$(dir $(SOURCE_DIR))"
+	cd "$(dir $(SOURCE_DIR))"  && git clone $(GITROOT) src
 
 
 # apply patch to sources
 $(SOURCE_DIR)/_patch_$(PACKAGE_NAME):		$(SOURCE_DIR)
-	cd "$(SOURCE_DIR)" && cvs up
+	cd "$(SOURCE_DIR)" && git pull
 ifneq "$(VERSIONPATCH)" ""
 	bzcat "$(ARCHIVES_DIR)/$(PACKAGE_NAME)-$(VERSION)$(VERSIONPATCH).patch.bz2" | patch --directory $(SOURCE_DIR)
 endif
