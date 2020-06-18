@@ -33,7 +33,7 @@ clean:
 
 gcc:	gcc464
 
-binutils mintbin mintlib pml gemlib cflib qed gcc442 gcc443 gcc452 gcc463 gcc464 gemma:	init_dirs
+binutils mintbin mintlib pml gemlib cflib qed gcc464 gemma:	init_dirs
 	$(MAKE) -f Makefile.$@
 
 distrib:
