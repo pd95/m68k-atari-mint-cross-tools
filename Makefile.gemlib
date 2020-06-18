@@ -47,7 +47,7 @@ $(SOURCE_DIR):
 $(SOURCE_DIR)/_patch_$(PACKAGE_NAME):		$(SOURCE_DIR)
 	cd "$(SOURCE_DIR)" && git pull
 ifneq "$(VERSIONPATCH)" ""
-	bzcat "$(ARCHIVES_DIR)/$(PACKAGE_NAME)-$(VERSION)$(VERSIONPATCH).patch.bz2" | patch --directory $(SOURCE_DIR)/$(PACKAGE_NAME)
+	bzcat "$(ARCHIVES_DIR)/$(PACKAGE_NAME)-$(VERSION)$(VERSIONPATCH).patch.bz2" | patch --directory $(SOURCE_DIR)
 endif
 	echo "$(VERSIONPATCH)" >  $@
 
