@@ -2,7 +2,7 @@ BASE_DIR=$(CURDIR)
 
 # Source and destination directories
 export ARCHIVES_DIR=$(BASE_DIR)/archive
-export BUILD_DIR=$(BASE_DIR)/compil
+export BUILD_DIR=$(BASE_DIR)/compile
 export PACKAGES_DIR=$(BASE_DIR)/packages
 
 # Installation location
@@ -22,16 +22,14 @@ export VERSIONBINCPU=$(VERSIONBIN)-$(shell uname -m  | tr "[:upper:]" "[:lower:]
 export VERSIONBUILD=$(shell date +%Y%m%d)
 
 ##########################################
-all:	init_dirs binutils mintbin gcc gemlib distrib
+all:	init_dirs binutils mintbin gcc gemlib qed distrib
 
-init_dirs:	$(BUILD_DIR) $(PACKAGES_DIR) $(PREFIX)
-	mkdir -p "$(BUILD_DIR)/dep_libs"
-	cp -rf "$(ARCHIVES_DIR)/dep_libs/$(shell uname -p)/"* "$(BUILD_DIR)/dep_libs/"
+init_dirs: $(BUILD_DIR) $(PACKAGES_DIR) $(ARCHIVES_DIR) $(PREFIX)
 
 clean:
 	rm -rf "$(BUILD_DIR)"
 
-gcc:	gcc464
+gcc:	$(BUILD_DIR)/gcclibs gcc464
 
 binutils mintbin mintlib pml gemlib cflib qed gcc464 gemma:	init_dirs
 	$(MAKE) -f Makefile.$@
@@ -55,5 +53,15 @@ universal_distrib:
 		--exclude .DS_Store --exclude "._*" -C "$(BUILD_DIR)/universal_distrib/$(ARCH1)/" cross-mint
 
 ###########################################
-$(BUILD_DIR) $(PACKAGES_DIR) $(PREFIX):
+$(BUILD_DIR) $(PACKAGES_DIR) $(PREFIX) $(ARCHIVES_DIR):
 	mkdir -p "$@"
+
+$(ARCHIVES_DIR)/gcclibs/$(shell uname -p)/:
+	$(MAKE) -f Makefile.gcclibs
+
+$(BUILD_DIR)/gcclibs:		$(ARCHIVES_DIR)/gcclibs/$(shell uname -p)/
+	mkdir -p "$(BUILD_DIR)/gcclibs"
+	cp -rf "$(ARCHIVES_DIR)/gcclibs/$(shell uname -p)/"* "$(BUILD_DIR)/gcclibs/"
+
+fetch:
+	if [ ! -f "$(ARCHIVES_DIR)/$(FILE)" ] ; then cd $(ARCHIVES_DIR) ; curl -O -f "http://vincent.riviere.free.fr/soft/m68k-atari-mint/archives/$(FILE)" ; else echo "** Patch file $(FILE) already load." ; fi

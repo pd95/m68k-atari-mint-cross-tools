@@ -1,0 +1,70 @@
+PACKAGE_NAME=gcclibs
+GMP=gmp-6.2.0
+MPFR=mpfr-4.0.2
+MPC=mpc-1.1.0
+SOURCE_DIR=$(BUILD_DIR)
+COMPIL_DIR=$(BUILD_DIR)
+BINARY_DIR=$(COMPIL_DIR)/gcclibs
+LOCAL_PREFIX_DIR=$(BINARY_DIR)
+
+ARCH=x86_64
+
+##########################################
+.PHONY: all gmp mpfr mpc
+
+all:	gmp mpfr mpc
+	mkdir -p "$(ARCHIVES_DIR)/gcclibs/$(shell uname -p)/"
+	cp -rf "$(BUILD_DIR)/gcclibs/"* "$(ARCHIVES_DIR)/gcclibs/$(shell uname -p)/"
+
+##########################################
+# Handle GMP
+$(ARCHIVES_DIR)/$(GMP).tar.lz:
+	curl -o $(ARCHIVES_DIR)/$(notdir $@) -f "https://gmplib.org/download/gmp/$(notdir $@)"
+
+$(SOURCE_DIR)/$(GMP):	$(ARCHIVES_DIR)/$(GMP).tar.lz
+	tar xvjf $< --directory=$(SOURCE_DIR)
+
+$(COMPIL_DIR)/$(GMP)-$(VERSIONBINCPU)/Makefile:	$(SOURCE_DIR)/$(GMP)
+	-mkdir -p $(dir $@)
+	cd "$(dir $@)" && \
+	$(SOURCE_DIR)/$(GMP)/configure --disable-shared --enable-static --prefix=$(LOCAL_PREFIX_DIR) 
+
+gmp:    $(COMPIL_DIR)/$(GMP)-$(VERSIONBINCPU)/Makefile
+	make --directory="$(COMPIL_DIR)/$(GMP)-$(VERSIONBINCPU)" all check install
+
+
+##########################################
+# Handle MPFR
+$(ARCHIVES_DIR)/$(MPFR).tar.bz2:
+	curl -o $(ARCHIVES_DIR)/$(notdir $@) -f "https://www.mpfr.org/mpfr-current/$(notdir $@)"
+
+$(SOURCE_DIR)/$(MPFR):	$(ARCHIVES_DIR)/$(MPFR).tar.bz2
+	tar xvjf $< --directory=$(SOURCE_DIR)
+
+$(COMPIL_DIR)/$(MPFR)-$(VERSIONBINCPU)/Makefile:	$(SOURCE_DIR)/$(MPFR)
+	-mkdir $(dir $@)
+	cd "$(dir $@)" && \
+	$(SOURCE_DIR)/$(MPFR)/configure --disable-shared --enable-static --with-gmp=$(LOCAL_PREFIX_DIR) --prefix=$(LOCAL_PREFIX_DIR) 
+
+mpfr:    $(COMPIL_DIR)/$(MPFR)-$(VERSIONBINCPU)/Makefile
+	make --directory="$(COMPIL_DIR)/$(MPFR)-$(VERSIONBINCPU)" all check install
+
+##########################################
+# Handle MPC
+$(ARCHIVES_DIR)/$(MPC).tar.gz:
+	curl -o $(ARCHIVES_DIR)/$(notdir $@) -f "https://ftp.gnu.org/gnu/mpc/$(notdir $@)"
+
+$(SOURCE_DIR)/$(MPC):	$(ARCHIVES_DIR)/$(MPC).tar.gz
+	tar xvjf $< --directory=$(SOURCE_DIR)
+
+$(COMPIL_DIR)/$(MPC)-$(VERSIONBINCPU)/Makefile:	$(SOURCE_DIR)/$(MPC)
+	-mkdir $(dir $@)
+	cd "$(dir $@)" && \
+	$(SOURCE_DIR)/$(MPC)/configure --disable-shared --enable-static \
+		--with-gmp=$(LOCAL_PREFIX_DIR) \
+		--with-mpfr=$(LOCAL_PREFIX_DIR) \
+		--prefix=$(LOCAL_PREFIX_DIR) 
+
+mpc:    $(COMPIL_DIR)/$(MPC)-$(VERSIONBINCPU)/Makefile
+	make --directory="$(COMPIL_DIR)/$(MPC)-$(VERSIONBINCPU)" all check install
+

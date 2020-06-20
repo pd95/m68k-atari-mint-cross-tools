@@ -3,6 +3,9 @@ VERSION=CVS-20110527
 VERSIONPATCH=
 SOURCE_DIR=$(BUILD_DIR)/$(PACKAGE_NAME)-$(VERSION)
 COMPIL_DIR=$(BUILD_DIR)/$(PACKAGE_NAME)-$(VERSION)$(VERSIONPATCH)-$(VERSIONBINCPU)
+GIT_SRC=
+ARCHIVE_SRC_FILE=$(PACKAGE_NAME)-$(VERSION).tar.gz
+ARCHIVE_PATCH_FILE=$(PACKAGE_NAME)-$(VERSION)$(VERSIONPATCH).patch.bz2
 PACKAGE_FILE=$(PACKAGE_NAME)-$(VERSION)$(VERSIONPATCH)-$(VERSIONBINCPU)-$(VERSIONBUILD).tgz
 
 BINARY_DIR=$(COMPIL_DIR)/binary-package
@@ -12,6 +15,8 @@ ARCH=x86_64
 CFLAGS=-D_POSIX_SOURCE
 
 ##########################################
+.PHONY: all clean extract patch configure compile packaging install
+
 all:		extract patch configure compile packaging install
 
 clean:	
@@ -19,10 +24,11 @@ clean:
 	rm -rf "$(SOURCE_DIR)"
 	rm -rf "$(PACKAGES_DIR)/$(PACKAGE_FILE)"
 
+
 ##########################################
 extract:	$(SOURCE_DIR)
 
-patch:		$(SOURCE_DIR)/_patch
+patch:		$(SOURCE_DIR)/_patch_$(PACKAGE_NAME)
 
 configure:	$(COMPIL_DIR)/Makefile
 
@@ -37,20 +43,27 @@ install:	packaging
 ##########################################
 # extract sources
 $(SOURCE_DIR):
-	tar xvzf "$(ARCHIVES_DIR)/$(PACKAGE_NAME)-$(VERSION).tar.gz" --directory "$(BUILD_DIR)"
+ifneq "$(ARCHIVE_SRC_FILE)" ""
+	$(MAKE) FILE="$(ARCHIVE_SRC_FILE)" fetch
+	tar xvzf "$(ARCHIVES_DIR)/$(ARCHIVE_SRC_FILE)" --directory "$(BUILD_DIR)"
+endif
+ifneq "$(GIT_SRC)" ""
+	mkdir -p "$(dir $(SOURCE_DIR))"
+	cd "$(dir $(SOURCE_DIR))"  && git clone $(GIT_SRC)
+endif
+	cp /usr/local/share/automake-1.*/config.* "$(SOURCE_DIR)"
 
 
 # apply patch to sources
-$(SOURCE_DIR)/_patch:		$(SOURCE_DIR)
+$(SOURCE_DIR)/_patch_$(PACKAGE_NAME):
 ifneq "$(VERSIONPATCH)" ""
-	bzcat "$(ARCHIVES_DIR)/$(PACKAGE_NAME)-$(VERSION)$(VERSIONPATCH).patch.bz2" | patch -p1 --directory $<
+	$(MAKE) FILE="$(ARCHIVE_PATCH_FILE)" fetch
+	bzcat "$(ARCHIVES_DIR)/$(ARCHIVE_PATCH_FILE)" | patch -p1 --directory $(SOURCE_DIR) && touch "$(SOURCE_DIR)/_patch_$(PACKAGE_NAME)"
 endif
-	cp /usr/local/share/automake-1.*/config.* "$(SOURCE_DIR)"
-	echo "$(VERSIONPATCH)" >  $@
 
 
 # configure package
-$(COMPIL_DIR)/Makefile:	$(SOURCE_DIR)/_patch
+$(COMPIL_DIR)/Makefile:
 	-mkdir $(dir $@)
 	cd "$(dir $@)" && \
 	CC="gcc -arch $(ARCH)" CXX="g++ -arch $(ARCH)" ../$(PACKAGE_NAME)-$(VERSION)/configure --target=m68k-atari-mint --prefix="$(PREFIX)" --disable-nls

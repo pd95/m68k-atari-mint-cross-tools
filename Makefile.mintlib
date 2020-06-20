@@ -3,6 +3,9 @@ VERSION=Git-20170304
 VERSIONPATCH=-macos
 SOURCE_DIR=$(BUILD_DIR)/$(PACKAGE_NAME)-$(VERSION)
 COMPIL_DIR=$(BUILD_DIR)/$(PACKAGE_NAME)-$(VERSION)$(VERSIONPATCH)-$(VERSIONBIN)
+GIT_SRC=
+ARCHIVE_SRC_FILE=$(PACKAGE_NAME)-$(VERSION).tar.gz
+ARCHIVE_PATCH_FILE=$(PACKAGE_NAME)-$(VERSION)$(VERSIONPATCH).patch.bz2
 PACKAGE_FILE=$(PACKAGE_NAME)-$(VERSION)$(VERSIONPATCH)-$(VERSIONBIN)-$(VERSIONBUILD).tgz
 
 BINARY_DIR=$(COMPIL_DIR)/binary-package
@@ -19,6 +22,8 @@ else
 endif
 
 ##########################################
+.PHONY: all clean extract patch configure compile packaging install
+
 all:		extract patch configure compile packaging install
 
 clean:	
@@ -30,7 +35,7 @@ clean:
 ##########################################
 extract:	$(SOURCE_DIR)
 
-patch:		$(SOURCE_DIR)/_patch
+patch:		$(SOURCE_DIR)/_patch_$(PACKAGE_NAME)
 
 configure:
 
@@ -51,20 +56,27 @@ install:	packaging
 ##########################################
 # extract sources
 $(SOURCE_DIR):
-	tar xvzf "$(ARCHIVES_DIR)/$(PACKAGE_NAME)-$(VERSION).tar.gz" --directory "$(BUILD_DIR)"
+ifneq "$(ARCHIVE_SRC_FILE)" ""
+	$(MAKE) FILE="$(ARCHIVE_SRC_FILE)" fetch
+	tar xvzf "$(ARCHIVES_DIR)/$(ARCHIVE_SRC_FILE)" --directory "$(BUILD_DIR)"
+endif
+ifneq "$(GIT_SRC)" ""
+	mkdir -p "$(dir $(SOURCE_DIR))"
+	git clone --depth 1 $(GIT_SRC) $(SOURCE_DIR)/
+endif
 
 
 # apply patch to sources
-$(SOURCE_DIR)/_patch:		$(SOURCE_DIR)
+$(SOURCE_DIR)/_patch_$(PACKAGE_NAME):
 ifneq "$(VERSIONPATCH)" ""
-	bzcat "$(ARCHIVES_DIR)/$(PACKAGE_NAME)-$(VERSION)$(VERSIONPATCH).patch.bz2" | patch -p1 --directory $<
+	$(MAKE) FILE="$(ARCHIVE_PATCH_FILE)" fetch
+	bzcat "$(ARCHIVES_DIR)/$(ARCHIVE_PATCH_FILE)" | patch -p1 --directory $(SOURCE_DIR) && touch "$(SOURCE_DIR)/_patch_$(PACKAGE_NAME)"
+	echo "$(GCC_BUILD_DIR)include -I$(GCC_BUILD_DIR)include-fixed" > "$(SOURCE_DIR)/includepath"	
 endif
-	echo "$(GCC_BUILD_DIR)include -I$(GCC_BUILD_DIR)include-fixed" > "$(SOURCE_DIR)/includepath"
-	echo "$(VERSIONPATCH)" >  $@
 
 
 # build distribution package
-$(PACKAGES_DIR)/$(PACKAGE_FILE): $(SOURCE_DIR)/_patch
+$(PACKAGES_DIR)/$(PACKAGE_FILE): compile
 	make --directory="$(SOURCE_DIR)" install prefix=$(LOCAL_PREFIX_DIR)/m68k-atari-mint CROSS=yes \
 		WITH_020_LIB=yes WITH_V4E_LIB=yes WITH_DEBUG_LIB=yes WITH_PROFILE_LIB=no \
 		CC="$(CC) -B$(GCC_BUILD_DIR) -B$(M68K_PREFIX)/bin/ -B$(M68K_PREFIX)/lib/ -isystem $(M68K_PREFIX)/include -isystem $(M68K_PREFIX)/sys-include"

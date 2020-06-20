@@ -1,8 +1,11 @@
 PACKAGE_NAME=gcc
 VERSION=4.6.4
-VERSIONPATCH=-mint-20140730
+VERSIONPATCH=-mint-macos
 SOURCE_DIR=$(BUILD_DIR)/$(PACKAGE_NAME)-$(VERSION)
 COMPIL_DIR=$(BUILD_DIR)/$(PACKAGE_NAME)-$(VERSION)$(VERSIONPATCH)-$(VERSIONBINCPU)
+GIT_SRC=
+ARCHIVE_SRC_FILE=$(PACKAGE_NAME)-$(VERSION).tar.bz2
+ARCHIVE_PATCH_FILE=$(PACKAGE_NAME)-$(VERSION)$(VERSIONPATCH).patch.bz2
 PACKAGE_FILE=$(PACKAGE_NAME)-$(VERSION)$(VERSIONPATCH)-$(VERSIONBINCPU)-$(VERSIONBUILD).tgz
 
 BINARY_DIR=$(COMPIL_DIR)/binary-package
@@ -12,6 +15,8 @@ ARCH=x86_64
 CFLAGS=
 
 ##########################################
+.PHONY: all clean extract patch configure compile packaging install
+
 all:		extract patch configure compile packaging install
 
 clean:	
@@ -22,7 +27,7 @@ clean:
 ##########################################
 extract:	$(SOURCE_DIR)
 
-patch:		$(SOURCE_DIR)/_patch
+patch:		$(SOURCE_DIR)/_patch_$(PACKAGE_NAME)
 
 configure:	$(COMPIL_DIR)/Makefile
 
@@ -37,25 +42,32 @@ install:	packaging
 ##########################################
 # extract sources
 $(SOURCE_DIR):
-	tar jxvf "$(ARCHIVES_DIR)/$(PACKAGE_NAME)-$(VERSION).tar.bz2" --directory "$(BUILD_DIR)"
+ifneq "$(ARCHIVE_SRC_FILE)" ""
+	$(MAKE) FILE="$(ARCHIVE_SRC_FILE)" fetch
+	tar xvjf "$(ARCHIVES_DIR)/$(ARCHIVE_SRC_FILE)" --directory "$(BUILD_DIR)"
+endif
+ifneq "$(GIT_SRC)" ""
+	mkdir -p "$(dir $(SOURCE_DIR))"
+	git clone --depth 1 $(GIT_SRC) $(SOURCE_DIR)/
+endif
 
 
 # apply patch to sources
-$(SOURCE_DIR)/_patch:		$(SOURCE_DIR)
+$(SOURCE_DIR)/_patch_$(PACKAGE_NAME):
 ifneq "$(VERSIONPATCH)" ""
-	bzcat "$(ARCHIVES_DIR)/$(PACKAGE_NAME)-$(VERSION)$(VERSIONPATCH).patch.bz2" | patch -p1 --directory $<
+	$(MAKE) FILE="$(ARCHIVE_PATCH_FILE)" fetch
+	bzcat "$(ARCHIVES_DIR)/$(ARCHIVE_PATCH_FILE)" | patch -p1 --directory $(SOURCE_DIR) && touch "$(SOURCE_DIR)/_patch_$(PACKAGE_NAME)"
 endif
-	echo "$(VERSIONPATCH)" >  $@
 
 
 # configure package
-$(COMPIL_DIR)/Makefile:	$(SOURCE_DIR)/_patch
+$(COMPIL_DIR)/Makefile:	$(SOURCE_DIR)/_patch_$(PACKAGE_NAME)
 	-mkdir $(dir $@)
 	cd "$(dir $@)" && \
 	CC="gcc -arch $(ARCH)" CXX="g++ -arch $(ARCH)" ../$(PACKAGE_NAME)-$(VERSION)/configure --target=m68k-atari-mint --prefix="$(PREFIX)" \
 		--enable-languages="c,c++" \
 		--disable-nls --disable-libstdcxx-pch \
-		--with-gmp=$(BUILD_DIR)/dep_libs --with-mpfr=$(BUILD_DIR)/dep_libs \
+		--with-gmp=$(BUILD_DIR)/gcclibs --with-mpfr=$(BUILD_DIR)/gcclibs \
 		CFLAGS_FOR_TARGET="-O2 -fomit-frame-pointer" CXXFLAGS_FOR_TARGET="-O2 -fomit-frame-pointer"
 		
 
