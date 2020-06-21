@@ -29,7 +29,8 @@ To use the Makefiles, you will have to install:
 - [Homebrew](https://brew.sh) (=the `brew` command)
 - [GNU project tools](https://www.gnu.org/software/) autoconf, automake and libtool (using the command `brew install autoconf automake libtool`)
 
-The scripts/Makefiles are automatically going to download the required sources and MiNT specific patches from [Vincents page](http://vincent.riviere.free.fr/soft/m68k-atari-mint/). Those are  then stored in the `archive` folder.
+The scripts/Makefiles are automatically going to download the required sources and MiNT specific patches from [Vincents page](http://vincent.riviere.free.fr/soft/m68k-atari-mint/). For a few parts, I had to adjust the patches respectively write macOS specific patches.
+Those are  stored in the `archive` folder.
 
 GCC depends on three additional libraries (GMP, MPFR and MPC). As we want to statically link them to the compiler, they are also automatically built and stored in the `gcclibs` subfolder.
 
