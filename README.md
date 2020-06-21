@@ -52,7 +52,7 @@ sudo chown $USER /opt/cross-mint
 To build and install the cross-compiler toolset, you should simply checkout this repository to a local folder and type `make`:
 
 ```bash
-git clone https://github.com/pd95/m68k-atari-mint-cross-tools-macos-scripts.git m68k-atari-mint
+git clone https://github.com/pd95/m68k-atari-mint-cross-tools.git m68k-atari-mint
 cd m68k-atari-mint
 make
 ```
