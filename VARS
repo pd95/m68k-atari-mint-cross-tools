@@ -1,0 +1,28 @@
+.EXPORT_ALL_VARIABLES:
+
+BASE_DIR=$(CURDIR)
+
+# Source and destination directories
+ARCHIVES_DIR=$(BASE_DIR)/archive
+BUILD_DIR=$(BASE_DIR)/compile
+PACKAGES_DIR=$(BASE_DIR)/packages
+
+# Installation location
+PREFIX=/opt/cross-mint
+
+# Add search path for cross tools
+PATH:=$(PATH):/opt/cross-mint/bin
+
+# Default host architecture and system
+HOSTSYS=$(shell uname -s | tr "[:upper:]" "[:lower:]")
+ARCH=x86_64
+#ARCH=$(shell uname -m | tr "[:upper:]" "[:lower:]")
+
+# Homebrew installation location
+HOMEBREW_PREFIX=$(shell brew config | grep HOMEBREW_PREFIX | awk '{print $$2}')
+
+##########################################
+VERSIONBIN=bin-$(HOSTSYS)
+VERSIONBINCPU=$(VERSIONBIN)-$(ARCH)
+VERSIONBUILD=$(shell date +%Y%m%d)
+

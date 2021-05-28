@@ -1,3 +1,5 @@
+include VARS
+
 PACKAGE_NAME=gcc
 VERSION=4.6.4
 VERSIONPATCH=-mint-macos
@@ -11,7 +13,6 @@ PACKAGE_FILE=$(PACKAGE_NAME)-$(VERSION)$(VERSIONPATCH)-$(VERSIONBINCPU)-$(VERSIO
 BINARY_DIR=$(COMPIL_DIR)/binary-package
 LOCAL_PREFIX_DIR=$(BINARY_DIR)$(PREFIX)
 
-ARCH=x86_64
 CFLAGS=
 
 ##########################################
@@ -20,6 +21,9 @@ CFLAGS=
 all:		extract patch configure compile packaging install
 
 clean:	
+ifeq "$(BUILD_DIR)" ""
+	@echo "BUILD_DIR is not set" && exit 1
+endif
 	rm -rf "$(COMPIL_DIR)"
 	rm -rf "$(SOURCE_DIR)"
 	rm -rf "$(PACKAGES_DIR)/$(PACKAGE_FILE)"
