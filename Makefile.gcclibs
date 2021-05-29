@@ -9,6 +9,14 @@ COMPIL_DIR=$(BUILD_DIR)
 BINARY_DIR=$(COMPIL_DIR)/gcclibs
 LOCAL_PREFIX_DIR=$(BINARY_DIR)
 
+ARCH=x86_64
+
+# select gnu-tar if available
+TAR=$(shell which gtar)
+ifeq (, $(TAR))
+TAR=tar
+endif
+
 ##########################################
 .PHONY: all gmp mpfr mpc
 
@@ -22,7 +30,7 @@ $(ARCHIVES_DIR)/$(GMP).tar.lz:
 	curl -o $(ARCHIVES_DIR)/$(notdir $@) -f "https://gmplib.org/download/gmp/$(notdir $@)"
 
 $(SOURCE_DIR)/$(GMP):	$(ARCHIVES_DIR)/$(GMP).tar.lz
-	tar xvjf $< --directory=$(SOURCE_DIR)
+	$(TAR) xvf $< --directory=$(SOURCE_DIR)
 
 $(COMPIL_DIR)/$(GMP)-$(VERSIONBINCPU)/Makefile:	$(SOURCE_DIR)/$(GMP)
 	-mkdir -p $(dir $@)
@@ -39,7 +47,7 @@ $(ARCHIVES_DIR)/$(MPFR).tar.bz2:
 	curl -o $(ARCHIVES_DIR)/$(notdir $@) -f "https://www.mpfr.org/mpfr-current/$(notdir $@)"
 
 $(SOURCE_DIR)/$(MPFR):	$(ARCHIVES_DIR)/$(MPFR).tar.bz2
-	tar xvjf $< --directory=$(SOURCE_DIR)
+	$(TAR) xvf $< --directory=$(SOURCE_DIR)
 
 $(COMPIL_DIR)/$(MPFR)-$(VERSIONBINCPU)/Makefile:	$(SOURCE_DIR)/$(MPFR)
 	-mkdir $(dir $@)
@@ -55,7 +63,7 @@ $(ARCHIVES_DIR)/$(MPC).tar.gz:
 	curl -o $(ARCHIVES_DIR)/$(notdir $@) -f "https://ftp.gnu.org/gnu/mpc/$(notdir $@)"
 
 $(SOURCE_DIR)/$(MPC):	$(ARCHIVES_DIR)/$(MPC).tar.gz
-	tar xvjf $< --directory=$(SOURCE_DIR)
+	$(TAR) xvf $< --directory=$(SOURCE_DIR)
 
 $(COMPIL_DIR)/$(MPC)-$(VERSIONBINCPU)/Makefile:	$(SOURCE_DIR)/$(MPC)
 	-mkdir $(dir $@)
