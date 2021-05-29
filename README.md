@@ -41,6 +41,7 @@ The goal of this package/bundle of scripts is to have a single command to **buil
 The tools are installed in the `/opt/cross-mint` folder. You need administration rights to create this directory on your system.
 
 ## Build
+
 First, ensure that the `/opt/cross-mint` directory exists and is writable by your user.
 
 To create the directory and take full ownership of it, you can use the following commands:
@@ -59,6 +60,14 @@ make
 ```
 
 This will build and install the tool in `/opt/cross-mint` and will produce a "distribution package" in the `packages` directory.
+
+### Known problems
+
+On older macOS versions (e.g. macOS Sierra 10.13) where the `tar` command is unable to extract `bz2` or `lz` compressed files, you will encounter the error message `tar: Unrecognized archive format` while `gcclibs` is being executed.
+
+To fix this you have to install `gnu-tar` and `lzip` using brew:
+
+    brew install gnu-tar lzip
 
 ## Usage
 
