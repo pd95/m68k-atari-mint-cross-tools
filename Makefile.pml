@@ -1,6 +1,8 @@
+include VARS
+
 PACKAGE_NAME=pml
 VERSION=2.03
-VERSIONPATCH=-mint-20110207
+VERSIONPATCH=-mint-20191013
 SOURCE_DIR=$(BUILD_DIR)/$(PACKAGE_NAME)-$(VERSION)
 COMPIL_DIR=$(BUILD_DIR)/$(PACKAGE_NAME)-$(VERSION)$(VERSIONPATCH)-$(VERSIONBIN)
 GIT_SRC=
@@ -28,6 +30,9 @@ endif
 all:		extract patch configure compile packaging install
 
 clean:	
+ifeq "$(BUILD_DIR)" ""
+	@echo "BUILD_DIR is not set" && exit 1
+endif
 	rm -rf "$(COMPIL_DIR)"
 	rm -rf "$(SOURCE_DIR)"
 	rm -rf "$(PACKAGES_DIR)/$(PACKAGE_FILE)"

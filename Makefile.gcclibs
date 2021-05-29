@@ -1,13 +1,13 @@
+include VARS
+
 PACKAGE_NAME=gcclibs
-GMP=gmp-6.2.0
-MPFR=mpfr-4.0.2
-MPC=mpc-1.1.0
+GMP=gmp-6.2.1
+MPFR=mpfr-4.1.0
+MPC=mpc-1.2.1
 SOURCE_DIR=$(BUILD_DIR)
 COMPIL_DIR=$(BUILD_DIR)
 BINARY_DIR=$(COMPIL_DIR)/gcclibs
 LOCAL_PREFIX_DIR=$(BINARY_DIR)
-
-ARCH=x86_64
 
 ##########################################
 .PHONY: all gmp mpfr mpc

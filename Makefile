@@ -1,32 +1,19 @@
-BASE_DIR=$(CURDIR)
-
-# Source and destination directories
-export ARCHIVES_DIR=$(BASE_DIR)/archive
-export BUILD_DIR=$(BASE_DIR)/compile
-export PACKAGES_DIR=$(BASE_DIR)/packages
-
-# Installation location
-export PREFIX=/opt/cross-mint
-
-# Add search path for cross tools
-export PATH:=$(PATH):/opt/cross-mint/bin
+include VARS
 
 # Default cross compiler
-export CC=$(shell which m68k-atari-mint-gcc)
+#export CC=$(shell which m68k-atari-mint-gcc)
 ARCH1=x86_64
 ARCH2=i386
 
 ##########################################
-export VERSIONBIN=bin-$(shell uname -s  | tr "[:upper:]" "[:lower:]")
-export VERSIONBINCPU=$(VERSIONBIN)-$(shell uname -m  | tr "[:upper:]" "[:lower:]")
-export VERSIONBUILD=$(shell date +%Y%m%d)
-
-##########################################
-all:	init_dirs binutils mintbin gcc gemlib qed distrib
+all:	init_dirs binutils mintbin gcc gemlib distrib
 
 init_dirs: $(BUILD_DIR) $(PACKAGES_DIR) $(ARCHIVES_DIR) $(PREFIX)
 
 clean:
+ifeq "$(BUILD_DIR)" ""
+	@echo "BUILD_DIR is not set" && exit 1
+endif
 	rm -rf "$(BUILD_DIR)"
 
 gcc:	$(BUILD_DIR)/gcclibs gcc464
