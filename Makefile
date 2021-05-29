@@ -6,7 +6,7 @@ ARCH1=x86_64
 ARCH2=i386
 
 ##########################################
-all:	init_dirs binutils mintbin gcc gemlib qed distrib
+all:	init_dirs binutils mintbin gcc gemlib distrib
 
 init_dirs: $(BUILD_DIR) $(PACKAGES_DIR) $(ARCHIVES_DIR) $(PREFIX)
 
