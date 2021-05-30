@@ -68,7 +68,7 @@ endif
 $(COMPIL_DIR)/Makefile:	$(SOURCE_DIR)/_patch_$(PACKAGE_NAME)
 	-mkdir $(dir $@)
 	cd "$(dir $@)" && \
-	CC="gcc -arch $(ARCH)" CXX="g++ -arch $(ARCH)" ../$(PACKAGE_NAME)-$(VERSION)/configure --target=m68k-atari-mint --prefix="$(PREFIX)" \
+	CC="gcc -arch $(ARCH)" CXX="g++ -arch $(ARCH)" ../$(PACKAGE_NAME)-$(VERSION)/configure --build=$(ARCH)-apple-darwin --target=m68k-atari-mint --prefix="$(PREFIX)" \
 		--enable-languages="c,c++" \
 		--disable-nls --disable-libstdcxx-pch \
 		--with-gmp=$(BUILD_DIR)/gcclibs --with-mpfr=$(BUILD_DIR)/gcclibs \

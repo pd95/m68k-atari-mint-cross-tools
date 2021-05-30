@@ -33,7 +33,7 @@ $(SOURCE_DIR)/$(GMP):	$(ARCHIVES_DIR)/$(GMP).tar.lz
 $(COMPIL_DIR)/$(GMP)-$(VERSIONBINCPU)/Makefile:	$(SOURCE_DIR)/$(GMP)
 	-mkdir -p $(dir $@)
 	cd "$(dir $@)" && \
-	$(SOURCE_DIR)/$(GMP)/configure --disable-shared --enable-static --prefix=$(LOCAL_PREFIX_DIR) 
+	CC="gcc -arch $(ARCH)" CXX="g++ -arch $(ARCH)" $(SOURCE_DIR)/$(GMP)/configure --build=$(ARCH)-apple-darwin --disable-shared --enable-static --prefix=$(LOCAL_PREFIX_DIR) 
 
 gmp:    $(COMPIL_DIR)/$(GMP)-$(VERSIONBINCPU)/Makefile
 	make --directory="$(COMPIL_DIR)/$(GMP)-$(VERSIONBINCPU)" all check install
@@ -50,7 +50,7 @@ $(SOURCE_DIR)/$(MPFR):	$(ARCHIVES_DIR)/$(MPFR).tar.bz2
 $(COMPIL_DIR)/$(MPFR)-$(VERSIONBINCPU)/Makefile:	$(SOURCE_DIR)/$(MPFR)
 	-mkdir $(dir $@)
 	cd "$(dir $@)" && \
-	$(SOURCE_DIR)/$(MPFR)/configure --disable-shared --enable-static --with-gmp=$(LOCAL_PREFIX_DIR) --prefix=$(LOCAL_PREFIX_DIR) 
+	CC="gcc -arch $(ARCH)" CXX="g++ -arch $(ARCH)" $(SOURCE_DIR)/$(MPFR)/configure --build=$(ARCH)-apple-darwin --disable-shared --enable-static --with-gmp=$(LOCAL_PREFIX_DIR) --prefix=$(LOCAL_PREFIX_DIR) 
 
 mpfr:    $(COMPIL_DIR)/$(MPFR)-$(VERSIONBINCPU)/Makefile
 	make --directory="$(COMPIL_DIR)/$(MPFR)-$(VERSIONBINCPU)" all check install
@@ -66,7 +66,7 @@ $(SOURCE_DIR)/$(MPC):	$(ARCHIVES_DIR)/$(MPC).tar.gz
 $(COMPIL_DIR)/$(MPC)-$(VERSIONBINCPU)/Makefile:	$(SOURCE_DIR)/$(MPC)
 	-mkdir $(dir $@)
 	cd "$(dir $@)" && \
-	$(SOURCE_DIR)/$(MPC)/configure --disable-shared --enable-static \
+	CC="gcc -arch $(ARCH)" CXX="g++ -arch $(ARCH)" $(SOURCE_DIR)/$(MPC)/configure --build=$(ARCH)-apple-darwin --disable-shared --enable-static \
 		--with-gmp=$(LOCAL_PREFIX_DIR) \
 		--with-mpfr=$(LOCAL_PREFIX_DIR) \
 		--prefix=$(LOCAL_PREFIX_DIR) 
