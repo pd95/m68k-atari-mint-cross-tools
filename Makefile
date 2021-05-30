@@ -15,6 +15,7 @@ ifeq "$(BUILD_DIR)" ""
 	@echo "BUILD_DIR is not set" && exit 1
 endif
 	rm -rf "$(BUILD_DIR)"
+	rm -rf "$(ARCHIVES_DIR)/gcclibs/$(ARCH)"
 
 gcc:	$(BUILD_DIR)/gcclibs gcc464
 
@@ -43,12 +44,12 @@ universal_distrib:
 $(BUILD_DIR) $(PACKAGES_DIR) $(PREFIX) $(ARCHIVES_DIR):
 	mkdir -p "$@"
 
-$(ARCHIVES_DIR)/gcclibs/$(shell uname -p)/:
+$(ARCHIVES_DIR)/gcclibs/$(ARCH)/:
 	$(MAKE) -f Makefile.gcclibs
 
-$(BUILD_DIR)/gcclibs:		$(ARCHIVES_DIR)/gcclibs/$(shell uname -p)/
+$(BUILD_DIR)/gcclibs:		$(ARCHIVES_DIR)/gcclibs/$(ARCH)/
 	mkdir -p "$(BUILD_DIR)/gcclibs"
-	cp -rf "$(ARCHIVES_DIR)/gcclibs/$(shell uname -p)/"* "$(BUILD_DIR)/gcclibs/"
+	cp -rf "$(ARCHIVES_DIR)/gcclibs/$(ARCH)/"* "$(BUILD_DIR)/gcclibs/"
 
 fetch:
 	if [ ! -f "$(ARCHIVES_DIR)/$(FILE)" ] ; then cd $(ARCHIVES_DIR) ; curl -O -f "http://vincent.riviere.free.fr/soft/m68k-atari-mint/archives/$(FILE)" ; else echo "** Patch file $(FILE) already load." ; fi
