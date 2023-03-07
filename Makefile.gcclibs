@@ -2,6 +2,7 @@ include VARS
 
 PACKAGE_NAME=gcclibs
 GMP=gmp-6.2.1
+GMP_PATCH=gmp-6.2.1-macos.patch
 MPFR=mpfr-4.1.0
 MPC=mpc-1.2.1
 SOURCE_DIR=$(BUILD_DIR)
@@ -29,6 +30,7 @@ $(ARCHIVES_DIR)/$(GMP).tar.lz:
 
 $(SOURCE_DIR)/$(GMP):	$(ARCHIVES_DIR)/$(GMP).tar.lz
 	$(TAR) xvf $< --directory=$(SOURCE_DIR)
+	cat $(ARCHIVES_DIR)/$(GMP_PATCH) | patch -p1 --directory $(SOURCE_DIR)/$(GMP)
 
 $(COMPIL_DIR)/$(GMP)-$(VERSIONBINCPU)/Makefile:	$(SOURCE_DIR)/$(GMP)
 	-mkdir -p $(dir $@)
