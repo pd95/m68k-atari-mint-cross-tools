@@ -75,10 +75,5 @@ $(COMPIL_DIR)/Makefile:
 # build distribution package
 $(PACKAGES_DIR)/$(PACKAGE_FILE): $(COMPIL_DIR)/Makefile
 	make   --directory="$(COMPIL_DIR)" install DESTDIR="$(BINARY_DIR)" CFLAGS="$(CFLAGS)"
-	rm     "$(BINARY_DIR)/"m68k-atari-mint-*
-	rm -rf "$(LOCAL_PREFIX_DIR)/info"
-	mkdir  "$(LOCAL_PREFIX_DIR)/bin"
-	mv     "$(LOCAL_PREFIX_DIR)/m68k-atari-mint/bin/"* "$(LOCAL_PREFIX_DIR)/bin"
-	rmdir  "$(LOCAL_PREFIX_DIR)/m68k-atari-mint/bin"
 	strip  "$(LOCAL_PREFIX_DIR)/bin/"*
 	tar cvzf "$@" --directory "$(dir $(LOCAL_PREFIX_DIR))" $(notdir $(LOCAL_PREFIX_DIR)) 
