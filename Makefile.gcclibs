@@ -3,8 +3,8 @@ include VARS
 PACKAGE_NAME=gcclibs
 GMP=gmp-6.2.1
 GMP_PATCH=gmp-6.2.1-macos.patch
-MPFR=mpfr-4.1.0
-MPC=mpc-1.2.1
+MPFR=mpfr-4.2.0
+MPC=mpc-1.3.1
 SOURCE_DIR=$(BUILD_DIR)
 COMPIL_DIR=$(BUILD_DIR)
 BINARY_DIR=$(COMPIL_DIR)/gcclibs
