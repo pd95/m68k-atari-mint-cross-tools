@@ -15,8 +15,8 @@ PATH:=$(PATH):/opt/cross-mint/bin
 
 # Default host architecture and system
 HOSTSYS=$(shell uname -s | tr "[:upper:]" "[:lower:]")
-ARCH=x86_64
-#ARCH=$(shell uname -m | tr "[:upper:]" "[:lower:]")
+#ARCH=x86_64
+ARCH=$(shell uname -m | tr "[:upper:]" "[:lower:]")
 
 # Homebrew installation location
 HOMEBREW_PREFIX=$(shell brew config | grep HOMEBREW_PREFIX | awk '{print $$2}')
