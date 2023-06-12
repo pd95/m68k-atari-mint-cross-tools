@@ -17,9 +17,11 @@ endif
 	rm -rf "$(BUILD_DIR)"
 	rm -rf "$(ARCHIVES_DIR)/gcclibs/$(ARCH)"
 
-gcc:	$(BUILD_DIR)/gcclibs gcc464
+gcc:	$(BUILD_DIR)/gcclibs gcc-new
 
-binutils mintbin mintlib pml fdlibm gemlib cflib qed gcc464 gemma:	init_dirs
+gcc4:	$(BUILD_DIR)/gcclibs gcc464
+
+binutils mintbin mintlib pml fdlibm gemlib cflib qed gcc464 gcc-new gemma:	init_dirs
 	$(MAKE) -f Makefile.$@
 
 distrib:
