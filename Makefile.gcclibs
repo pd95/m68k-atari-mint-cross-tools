@@ -23,6 +23,18 @@ all:	gmp mpfr mpc
 	mkdir -p "$(ARCHIVES_DIR)/gcclibs/$(ARCH)/"
 	cp -rf "$(BUILD_DIR)/gcclibs/"* "$(ARCHIVES_DIR)/gcclibs/$(ARCH)/"
 
+clean:
+ifeq "$(BUILD_DIR)" ""
+	@echo "BUILD_DIR is not set" && exit 1
+endif
+	rm -rf "$(SOURCE_DIR)/$(GMP)"
+	rm -rf "$(COMPIL_DIR)/$(GMP)-$(VERSIONBINCPU)"
+	rm -rf "$(SOURCE_DIR)/$(MPFR)"
+	rm -rf "$(COMPIL_DIR)/$(MPFR)-$(VERSIONBINCPU)"
+	rm -rf "$(SOURCE_DIR)/$(MPC)"
+	rm -rf "$(COMPIL_DIR)/$(MPC)-$(VERSIONBINCPU)"
+	rm -rf "$(ARCHIVES_DIR)/gcclibs/$(ARCH)/"
+
 ##########################################
 # Handle GMP
 $(ARCHIVES_DIR)/$(GMP).tar.lz:
