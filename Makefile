@@ -19,7 +19,7 @@ endif
 
 gcc:	$(BUILD_DIR)/gcclibs gcc464
 
-binutils mintbin mintlib pml gemlib cflib qed gcc464 gemma:	init_dirs
+binutils mintbin mintlib pml fdlibm gemlib cflib qed gcc464 gemma:	init_dirs
 	$(MAKE) -f Makefile.$@
 
 distrib:
