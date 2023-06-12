@@ -48,7 +48,7 @@ compile:
 	@echo GCC=$(CC)
 	@echo GCC_BUILD_DIR=$(GCC_BUILD_DIR)  
 	@echo M68K_PREFIX=$(M68K_PREFIX)
-	make --directory="$(SOURCE_DIR)" prefix=$(LOCAL_PREFIX_DIR)/m68k-atari-mint CROSS=yes \
+	make -j $(NUM_CPUS) --directory="$(SOURCE_DIR)" prefix=$(LOCAL_PREFIX_DIR)/m68k-atari-mint CROSS=yes \
 		WITH_020_LIB=yes WITH_V4E_LIB=yes WITH_DEBUG_LIB=yes WITH_PROFILE_LIB=no \
 		CC="$(CC) -B$(GCC_BUILD_DIR) -B$(M68K_PREFIX)/bin/ -B$(M68K_PREFIX)/lib/ -isystem $(M68K_PREFIX)/include -isystem $(M68K_PREFIX)/sys-include"
 

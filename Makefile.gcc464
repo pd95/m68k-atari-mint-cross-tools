@@ -36,7 +36,7 @@ patch:		$(SOURCE_DIR)/_patch_$(PACKAGE_NAME)
 configure:	$(COMPIL_DIR)/Makefile
 
 compile:	temp_gcc mintlib pml fix_limits
-	make --directory="$(COMPIL_DIR)"
+	make -j $(NUM_CPUS) --directory="$(COMPIL_DIR)"
 
 packaging:	$(PACKAGES_DIR)/$(PACKAGE_FILE)
 
@@ -77,17 +77,17 @@ $(COMPIL_DIR)/Makefile:	$(SOURCE_DIR)/_patch_$(PACKAGE_NAME)
 
 
 temp_gcc:
-	make --directory="$(COMPIL_DIR)" all-gcc
+	make -j $(NUM_CPUS) --directory="$(COMPIL_DIR)" all-gcc
 ifeq "$(shell uname -s)" "Darwin"
 	rm "$(COMPIL_DIR)/gcc/as"
 	ln -s $(PREFIX)/bin/m68k-atari-mint-as "$(COMPIL_DIR)/gcc/as"
 endif
-	make --directory="$(COMPIL_DIR)" all-target-libgcc
+	make -j $(NUM_CPUS) --directory="$(COMPIL_DIR)" all-target-libgcc
 	
 
 # build distribution package
 $(PACKAGES_DIR)/$(PACKAGE_FILE):	$(COMPIL_DIR)/Makefile
-	make  --directory="$(COMPIL_DIR)" install DESTDIR="$(BINARY_DIR)" 
+	make -j $(NUM_CPUS) --directory="$(COMPIL_DIR)" install DESTDIR="$(BINARY_DIR)" 
 	-rm -r "$(LOCAL_PREFIX_DIR)"/include
 	-rm    "$(LOCAL_PREFIX_DIR)"/lib/*.a
 	-rm -r "$(LOCAL_PREFIX_DIR)"/share/info

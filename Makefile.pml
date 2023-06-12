@@ -51,21 +51,21 @@ compile:
 	sed -i ".bak" "s:^\(CROSSDIR =\).*:\1 $(M68K_PREFIX):g" Makefile Makefile.32 Makefile.16 && \
 	sed -i ".bak" "s:^\(AR =\).*:\1 m68k-atari-mint-ar:g" Makefile Makefile.32 Makefile.16 && \
 	sed -i ".bak" "s:^\(CC =\).*:\1 $(CC):g" Makefile Makefile.32 Makefile.16
-	make --directory="$(SOURCE_DIR)/pmlsrc"
+	make -j $(NUM_CPUS) --directory="$(SOURCE_DIR)/pmlsrc"
 	make --directory="$(SOURCE_DIR)/pmlsrc" install CROSSDIR=$(LOCAL_PREFIX_DIR)/m68k-atari-mint
 
 	make --directory="$(SOURCE_DIR)/pmlsrc" clean
 	cd "$(SOURCE_DIR)/pmlsrc" && \
 	sed -i ".bak" "s:^\(CFLAGS =.*\):\1 -m68020-60:g" Makefile.32 Makefile.16 && \
 	sed -i ".bak" "s:^\(CROSSLIB =.*\):\1/m68020-60:g" Makefile
-	make --directory="$(SOURCE_DIR)/pmlsrc"
+	make -j $(NUM_CPUS) --directory="$(SOURCE_DIR)/pmlsrc"
 	make --directory="$(SOURCE_DIR)/pmlsrc" install CROSSDIR=$(LOCAL_PREFIX_DIR)/m68k-atari-mint
 
 	make --directory="$(SOURCE_DIR)/pmlsrc" clean
 	cd "$(SOURCE_DIR)/pmlsrc" && \
 	sed -i ".bak" "s:-m68020-60:-mcpu=5475:g" Makefile.32 Makefile.16 && \
 	sed -i ".bak" "s:m68020-60:m5475:g" Makefile
-	make --directory="$(SOURCE_DIR)/pmlsrc"
+	make -j $(NUM_CPUS) --directory="$(SOURCE_DIR)/pmlsrc"
 	make --directory="$(SOURCE_DIR)/pmlsrc" install CROSSDIR=$(LOCAL_PREFIX_DIR)/m68k-atari-mint
 
 	cd "$(SOURCE_DIR)/pmlsrc" && \

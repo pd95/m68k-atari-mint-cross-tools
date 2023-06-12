@@ -36,7 +36,7 @@ patch:		$(SOURCE_DIR)/_patch_$(PACKAGE_NAME)
 configure:	$(COMPIL_DIR)/Makefile
 
 compile:
-	make --directory="$(COMPIL_DIR)" CFLAGS="$(CFLAGS)"
+	make -j $(NUM_CPUS) --directory="$(COMPIL_DIR)" CFLAGS="$(CFLAGS)"
 
 packaging:	$(PACKAGES_DIR)/$(PACKAGE_FILE)
 

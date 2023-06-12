@@ -49,7 +49,7 @@ compile:
 	@echo GCC=$(GCC)
 	@echo GCC_BUILD_DIR=$(GCC_BUILD_DIR)
 	@echo M68K_PREFIX=$(M68K_PREFIX)
-	make --directory="$(COMPIL_DIR)" prefix=$(LOCAL_PREFIX_DIR)/m68k-atari-mint \
+	make -j $(NUM_CPUS) --directory="$(COMPIL_DIR)" prefix=$(LOCAL_PREFIX_DIR)/m68k-atari-mint \
 		CC="$(CC) -B$(GCC_BUILD_DIR) -B$(M68K_PREFIX)/bin/ -B$(M68K_PREFIX)/lib/ -isystem $(M68K_PREFIX)/include -isystem $(M68K_PREFIX)/sys-include"
 
 packaging:	$(PACKAGES_DIR)/$(PACKAGE_FILE)
