@@ -16,7 +16,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Build
-        run: make PREFIX=$RUNNER_TEMP/cross-mint
+        run: make PREFIX=$RUNNER_TEMP/cross-mint init_dirs binutils distrib
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
