@@ -11,7 +11,7 @@ PACKAGES_DIR=$(BASE_DIR)/packages
 PREFIX=/opt/cross-mint
 
 # Add search path for cross tools
-PATH:=$(PATH):/opt/cross-mint/bin
+PATH:=$(PATH):$(PREFIX)/bin
 
 # Default host architecture and system
 HOSTSYS=$(shell uname -s | tr "[:upper:]" "[:lower:]")
