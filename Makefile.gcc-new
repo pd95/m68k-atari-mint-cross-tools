@@ -79,6 +79,7 @@ $(COMPIL_DIR)/Makefile:	$(SOURCE_DIR)/_patch_$(PACKAGE_NAME)
 		--disable-decimal-float \
 		--disable-nls \
 		--disable-shared \
+		--with-system-zlib \
 		--with-gmp=$(BUILD_DIR)/gcclibs --with-mpfr=$(BUILD_DIR)/gcclibs \
 		CFLAGS_FOR_TARGET="-O2 -fomit-frame-pointer" CXXFLAGS_FOR_TARGET="-O2 -fomit-frame-pointer"
 		

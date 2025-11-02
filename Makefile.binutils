@@ -68,7 +68,7 @@ endif
 $(COMPIL_DIR)/Makefile:	$(SOURCE_DIR)/_patch_$(PACKAGE_NAME)
 	-mkdir $(dir $@)
 	cd "$(dir $@)" && \
-	CC="gcc -arch $(ARCH)" CXX="g++ -arch $(ARCH)" ../$(PACKAGE_NAME)-$(VERSION)/configure --target=m68k-atari-mint --prefix="$(PREFIX)" --disable-nls
+	CC="gcc -arch $(ARCH)" CXX="g++ -arch $(ARCH)" ../$(PACKAGE_NAME)-$(VERSION)/configure --target=m68k-atari-mint --prefix="$(PREFIX)" --disable-nls --with-system-zlib
 
 
 # build distribution package
