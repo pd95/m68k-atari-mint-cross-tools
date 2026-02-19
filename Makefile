@@ -8,6 +8,27 @@ ARCH2=i386
 ##########################################
 all:	init_dirs binutils mintbin gcc gemlib distrib
 
+.PHONY: check_autoconf check_libtool
+
+check_autoconf:
+	@command -v autoconf >/dev/null 2>&1 || { \
+		echo "Error: autoconf is required but not found in PATH."; \
+		echo "Install with Homebrew: brew install autoconf automake"; \
+		exit 1; \
+	}
+	@command -v automake >/dev/null 2>&1 || { \
+		echo "Error: automake is required but not found in PATH."; \
+		echo "Install with Homebrew: brew install automake"; \
+		exit 1; \
+	}
+
+check_libtool:
+	@command -v glibtoolize >/dev/null 2>&1 || command -v libtoolize >/dev/null 2>&1 || { \
+		echo "Error: GNU libtoolize is required but not found in PATH."; \
+		echo "Install with Homebrew: brew install libtool"; \
+		exit 1; \
+	}
+	
 init_dirs: $(BUILD_DIR) $(PACKAGES_DIR) $(ARCHIVES_DIR) $(PREFIX)
 
 clean:
@@ -17,9 +38,11 @@ endif
 	rm -rf "$(BUILD_DIR)"
 	rm -rf "$(ARCHIVES_DIR)/gcclibs/$(ARCH)"
 
-gcc:	$(BUILD_DIR)/gcclibs gcc-new
+mintbin:	check_autoconf
 
-gcc4:	$(BUILD_DIR)/gcclibs gcc464
+gcc:	check_libtool $(BUILD_DIR)/gcclibs gcc-new
+
+gcc4:	check_libtool $(BUILD_DIR)/gcclibs gcc464
 
 binutils mintbin mintlib pml fdlibm gemlib cflib qed gcc464 gcc-new gemma:	init_dirs
 	$(MAKE) -f Makefile.$@
