@@ -6,7 +6,7 @@ ARCH1=x86_64
 ARCH2=i386
 
 ##########################################
-all:	init_dirs binutils mintbin gcc gemlib distrib
+all:	init_dirs binutils mintbin gcc gemlib libcmini distrib
 
 .PHONY: check_autoconf check_libtool
 
@@ -44,7 +44,7 @@ gcc:	check_libtool $(BUILD_DIR)/gcclibs gcc-new
 
 gcc4:	check_libtool $(BUILD_DIR)/gcclibs gcc464
 
-binutils mintbin mintlib pml fdlibm gemlib cflib qed gcc464 gcc-new gemma:	init_dirs
+binutils mintbin mintlib pml fdlibm gemlib libcmini cflib qed gcc464 gcc-new gemma:	init_dirs
 	$(MAKE) -f Makefile.$@
 
 distrib:
