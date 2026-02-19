@@ -2,12 +2,12 @@ include VARS
 
 PACKAGE_NAME=cflib
 VERSION=Git-$(VERSIONBUILD)
-VERSIONPATCH=
+VERSIONPATCH=-mint-macos
 SOURCE_DIR=$(BUILD_DIR)/$(PACKAGE_NAME)-$(VERSION)
 COMPIL_DIR=$(BUILD_DIR)/$(PACKAGE_NAME)-$(VERSION)$(VERSIONPATCH)-$(VERSIONBINCPU)
-GIT_SRC=https://github.com/freemint/cflib.git
+GIT_SRC=https://github.com/freemint/$(PACKAGE_NAME).git
 ARCHIVE_SRC_FILE=
-ARCHIVE_PATCH_FILE=$(PACKAGE_NAME)-$(VERSIONPATCH).patch.bz2
+ARCHIVE_PATCH_FILE=$(PACKAGE_NAME)-Git$(VERSIONPATCH).patch.bz2
 PACKAGE_FILE=$(PACKAGE_NAME)-$(VERSION)$(VERSIONPATCH)-$(VERSIONBIN)-$(VERSIONBUILD).tgz
 
 BINARY_DIR=$(COMPIL_DIR)/binary-package
@@ -39,7 +39,7 @@ configure:
 
 compile:
 	make --directory="$(SOURCE_DIR)" CROSS=yes PREFIX=$(LOCAL_PREFIX_DIR)/m68k-atari-mint
-	make --directory="$(SOURCE_DIR)" install CROSS=yes PREFIX=$(LOCAL_PREFIX_DIR)/m68k-atari-mint
+	make --directory="$(SOURCE_DIR)" install CROSS=yes DESTDIR=$(LOCAL_PREFIX_DIR)/m68k-atari-mint PREFIX=
 
 packaging:	$(PACKAGES_DIR)/$(PACKAGE_FILE)
 
