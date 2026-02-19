@@ -25,5 +25,5 @@ HOMEBREW_PREFIX=$(shell brew config | grep HOMEBREW_PREFIX | awk '{print $$2}')
 ##########################################
 VERSIONBIN=bin-$(HOSTSYS)
 VERSIONBINCPU=$(VERSIONBIN)-$(ARCH)
-VERSIONBUILD=$(shell date +%Y%m%d)
-
+VERSIONBUILD ?= $(shell date +%Y%m%d)
+VERSIONBUILD := $(VERSIONBUILD)
