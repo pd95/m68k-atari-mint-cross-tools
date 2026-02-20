@@ -61,6 +61,36 @@ make
 
 This will build and install the tool in `/opt/cross-mint` and will produce a "distribution package" in the `packages` directory.
 
+## Tests
+
+Basic test programs and checks are available in the `tests/` folder.
+
+Run fast smoke tests (hello world default/GEM/minimal):
+
+```bash
+make test
+```
+
+Run full integration tests (includes building and checking QED):
+
+```bash
+make test-all
+```
+
+Run only the QED build and checks:
+
+```bash
+make test-qed
+```
+
+When using a custom toolchain location (e.g. in CI), pass `PREFIX`:
+
+```bash
+make PREFIX=$RUNNER_TEMP/cross-mint all
+make PREFIX=$RUNNER_TEMP/cross-mint test
+make PREFIX=$RUNNER_TEMP/cross-mint test-all
+```
+
 ### Known problems
 
 On older macOS versions (e.g. macOS Sierra 10.13) where the `tar` command is unable to extract `bz2` or `lz` compressed files, you will encounter the error message `tar: Unrecognized archive format` while `gcclibs` is being executed.

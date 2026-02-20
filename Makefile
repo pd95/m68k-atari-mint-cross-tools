@@ -8,7 +8,7 @@ ARCH2=i386
 ##########################################
 all:	init_dirs binutils mintbin gcc gemlib libcmini distrib
 
-.PHONY: check_autoconf check_libtool
+.PHONY: check_autoconf check_libtool test test-all test-qed
 
 check_autoconf:
 	@command -v autoconf >/dev/null 2>&1 || { \
@@ -46,6 +46,15 @@ gcc4:	check_libtool $(BUILD_DIR)/gcclibs gcc464
 
 binutils mintbin mintlib pml fdlibm gemlib libcmini cflib qed gcc464 gcc-new gemma:	init_dirs
 	$(MAKE) -f Makefile.$@
+
+test:
+	$(MAKE) -C tests PREFIX="$(PREFIX)" check
+
+test-all:
+	$(MAKE) -C tests PREFIX="$(PREFIX)" check_all
+
+test-qed:
+	$(MAKE) -C tests PREFIX="$(PREFIX)" qed_build_check
 
 distrib:
 	cd "$(dir $(PREFIX))" && \
