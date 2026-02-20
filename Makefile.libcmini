@@ -11,7 +11,7 @@ ARCHIVE_PATCH_FILE=
 PACKAGE_FILE=$(PACKAGE_NAME)-$(VERSION)$(VERSIONPATCH)-$(VERSIONBIN)-$(VERSIONBUILD).tgz
 
 BINARY_DIR=$(COMPIL_DIR)/binary-package
-LOCAL_PREFIX_DIR=$(BINARY_DIR)$(PREFIX)/m68k-atari-mint
+LOCAL_PREFIX_DIR=$(BINARY_DIR)$(PREFIX)
 
 ##########################################
 .PHONY: all clean extract patch configure compile packaging install
@@ -35,8 +35,8 @@ patch:		$(SOURCE_DIR)/_patch_$(PACKAGE_NAME)
 configure:
 
 compile:
-	make --directory="$(SOURCE_DIR)" CROSS=Y ONLY_68K=N PREFIX=$(LOCAL_PREFIX_DIR)/libcmini
-	make --directory="$(SOURCE_DIR)" install CROSS=Y PREFIX=$(LOCAL_PREFIX_DIR)/libcmini
+	make --directory="$(SOURCE_DIR)" CROSS=Y ONLY_68K=N PREFIX=$(LOCAL_PREFIX_DIR)/m68k-atari-mint/libcmini
+	make --directory="$(SOURCE_DIR)" install CROSS=Y PREFIX=$(LOCAL_PREFIX_DIR)/m68k-atari-mint/libcmini
 
 packaging:	$(PACKAGES_DIR)/$(PACKAGE_FILE)
 
