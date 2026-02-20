@@ -22,10 +22,10 @@ jobs:
         run: make PREFIX=$RUNNER_TEMP/cross-mint all
 
       - name: Fast smoke tests
-        run: make -C tests PREFIX=$RUNNER_TEMP/cross-mint check
+        run: make PREFIX=$RUNNER_TEMP/cross-mint test
 
       - name: Full integration tests
-        run: make -C tests PREFIX=$RUNNER_TEMP/cross-mint check_all
+        run: make PREFIX=$RUNNER_TEMP/cross-mint test-all
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
