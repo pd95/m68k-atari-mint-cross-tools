@@ -21,6 +21,12 @@ jobs:
       - name: Build
         run: make PREFIX=$RUNNER_TEMP/cross-mint all
 
+      - name: Fast smoke tests
+        run: make -C tests PREFIX=$RUNNER_TEMP/cross-mint check
+
+      - name: Full integration tests
+        run: make -C tests PREFIX=$RUNNER_TEMP/cross-mint check_all
+
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:

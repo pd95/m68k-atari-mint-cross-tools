@@ -3,3 +3,4 @@ archive/**
 packages/**
 src_cvs/**
 scripts/**
+tests/build/**
